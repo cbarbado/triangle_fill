@@ -19,7 +19,6 @@ function prepareCanvas()
 
 	context = document.getElementById('canvas').getContext("2d");
 
-	context.strokeStyle           = "#ff0000";
 	context.fillStyle             = "#000000";
     context.lineWidth             = 1;
 
