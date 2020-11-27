@@ -1,8 +1,7 @@
 var canvas;
 var context;
-var pixel;
-var canvasWidth  = 800;
-var canvasHeight = 600;
+const canvasWidth  = 800;
+const canvasHeight = 600;
 var vertex_X     = new Array();
 var vertex_Y     = new Array();
 
@@ -17,8 +16,6 @@ function prepareCanvas()
 	if(typeof G_vmlCanvasManager != 'undefined') {
 		canvas = G_vmlCanvasManager.initElement(canvas);
 	}
-	// IE 8 and lower
-	// context = canvas.getContext("2d"); 
 
 	context = document.getElementById('canvas').getContext("2d");
 
@@ -28,20 +25,19 @@ function prepareCanvas()
 
 	$('#canvas').mousedown(function(e)
 	{
-		var mouseX = e.pageX - this.offsetLeft;
-		var mouseY = e.pageY - this.offsetTop;
-		
-		addVertex(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+		if(3 == vertex_X.length)	{
+			clearCanvas();
+		}
+		else {
+			addVertex(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+		}
 		redraw();
   	});
 }
 
-function addVertex(x, y, dragging)
+function addVertex(x, y)
 {
-	if(3 == vertex_X.length)	{
-		clearCanvas();
-	}
-	/* TODO: validar se o vértice já não está no array */
+	/* TODO: check if the vertex is not already in the array */
     vertex_X.push(x);
     vertex_Y.push(y);
 }
@@ -59,28 +55,13 @@ function setPixel (x,y) {
     context.fillRect(x, y,1,1);
 }
 
-function triborder()
-{
-	context.beginPath();
-	context.moveTo(vertex_X[0],vertex_Y[0]);
-	context.lineTo(vertex_X[1],vertex_Y[1]);
-	context.lineTo(vertex_X[2],vertex_Y[2]);
-	context.lineTo(vertex_X[0],vertex_Y[0]);
-	context.closePath();
-	context.stroke();
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 async function trifill()
 {
 	var top = 0;
 	var bot = 0;
 	var mid = 0;
 
-	/* TODO: validar se é um triângluo e não uma reta. */
+	/* TODO: check if it is a triangle and not a line. */
 
 	for(var i = 1; i < vertex_X.length; i++) {
 		if(vertex_Y[i] < vertex_Y[top]) {
@@ -94,15 +75,6 @@ async function trifill()
 	while ((mid == top) || (mid == bot)) {
 		mid ++;
 	}
-
-	/* DEBUG
-	context.fillStyle = "#00ff00";
-    context.fillRect(vertex_X[top]-5, vertex_Y[top]-5,10,10);
-	context.fillStyle = "#ff0000";
-    context.fillRect(vertex_X[bot]-5, vertex_Y[bot]-5,10,10);
-	context.fillStyle = "#0000ff";
-    context.fillRect(vertex_X[mid]-5, vertex_Y[mid]-5,10,10);
-    DEBIG */
 
   	/* TOP -> MID */
   	var delta_x1 = vertex_X[top] - vertex_X[bot];
@@ -152,11 +124,9 @@ function redraw()
   
   if(3 == vertex_X.length)
   {
-  	// triborder();
   	trifill();
   }
   else {
-  	context.strokeStyle = "#ff0000";
 	for(var i=0; i < vertex_X.length; i++) {		
 		context.fillRect(vertex_X[i], vertex_Y[i],3,3);
 	}
